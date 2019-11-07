@@ -1,19 +1,19 @@
 import pygame
 import math
 
-screen_width = 1500
-screen_height = 800
+screen_width = 2000
+screen_height = 1100
 check_point = ((1200, 660), (1250, 120), (190, 200), (1030, 270), (250, 475), (650, 690))
 
 class Car:
     def __init__(self, car_file, map_file, pos):
         self.surface = pygame.image.load(car_file)
         self.map = pygame.image.load(map_file)
-        self.surface = pygame.transform.scale(self.surface, (100, 100))
+        self.surface = pygame.transform.scale(self.surface, (70, 70))
         self.rotate_surface = self.surface
         self.pos = pos
-        self.angle = 0
-        self.speed = 7
+        self.angle = -45
+        self.speed = 3
         self.center = [self.pos[0] + 50, self.pos[1] + 50]
         self.radars = []
         self.radars_for_draw = []
@@ -98,7 +98,7 @@ class Car:
 
     def update(self):
         #check speed
-        #self.speed -= 0.5
+        self.speed -= 0.5
         if self.speed > 10:
             self.speed = 10
         if self.speed < 1:
@@ -135,7 +135,7 @@ class PyRace2D:
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
-        self.car = Car('car.png', 'map.png', [650, 650])
+        self.car = Car('car.png', 'map1.png', [600, 650])
         self.game_speed = 60
         self.is_render = is_render
 
@@ -157,18 +157,17 @@ class PyRace2D:
 
     def evaluate(self):
         reward = 0
-
+        """
         if self.car.check_flag:
             self.car.check_flag = False
             reward = 2000 - self.car.time_spent
             self.car.time_spent = 0
-
+        """
         if not self.car.is_alive:
             reward = -10000 + self.car.distance
 
         elif self.car.goal:
             reward = 10000
-
         return reward
 
     def is_done(self):
@@ -195,17 +194,20 @@ class PyRace2D:
             if event.type == pygame.QUIT:
                 done = True
 
-        #self.screen.blit(self.car.map, (0, 0))
+        self.screen.blit(self.car.map, (0, 0))
+
+        """
         self.screen.fill((0, 0, 0))
 
         self.car.radars_for_draw.clear()
         for d in range(-90, 105, 15):
             self.car.check_radar_for_draw(d)
-        self.car.draw(self.screen)
         pygame.draw.circle(self.screen, (255, 255, 0), check_point[self.car.current_check], 70, 1)
 
         self.car.draw_collision(self.screen)
         self.car.draw_radar(self.screen)
+        """
+        self.car.draw(self.screen)
         pygame.display.flip()
         self.clock.tick(self.game_speed)
 

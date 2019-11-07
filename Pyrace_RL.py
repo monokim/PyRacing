@@ -19,24 +19,12 @@ def simulate():
     for episode in range(NUM_EPISODES):
 
         total_rewards.append(total_reward)
-        if episode == 30000:
+        if episode == 50000:
             plt.plot(total_rewards)
             plt.ylabel('rewards')
             plt.show()
-            env.save_memory('30000')
+            env.save_memory('50000')
             break
-
-        if episode > 3000 and episode <= 3010:
-            if episode == 3001:
-                env.save_memory('3000')
-        elif episode > 5000 and episode <= 5010:
-            if episode == 5001:
-                env.save_memory('5000')
-        elif episode > 10000 and episode <= 10005:
-            if episode == 10001:
-                env.save_memory('10000')
-        elif episode == 20000:
-            env.save_memory('20000')
 
         obv = env.reset()
         state_0 = state_to_bucket(obv)
@@ -93,7 +81,7 @@ def load_and_play():
 
 
     # play game
-    env.set_view(False)
+    env.set_view(True)
     reward_count = 0
     for episode in range(NUM_EPISODES):
         obv = env.reset()
@@ -125,7 +113,7 @@ def load_and_play():
 
 def load_and_simulate():
     print("Start loading history")
-    history_list = ['3000.npy']
+    history_list = ['30000.npy']
 
     # load data from history file
     print("Start updating q_table")
@@ -236,6 +224,5 @@ if __name__ == "__main__":
     #MAX_T = np.prod(NUM_BUCKETS, dtype=int) * 100
 
     q_table = np.zeros(NUM_BUCKETS + (NUM_ACTIONS,), dtype=float)
-    #simulate()
-    #load_and_simulate()
-    load_and_play()
+    simulate()
+    #load_and_play()
