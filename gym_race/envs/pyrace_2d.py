@@ -1,19 +1,19 @@
 import pygame
 import math
 
-screen_width = 2000
-screen_height = 1100
+screen_width = 1500
+screen_height = 800
 check_point = ((1200, 660), (1250, 120), (190, 200), (1030, 270), (250, 475), (650, 690))
 
 class Car:
     def __init__(self, car_file, map_file, pos):
         self.surface = pygame.image.load(car_file)
         self.map = pygame.image.load(map_file)
-        self.surface = pygame.transform.scale(self.surface, (70, 70))
+        self.surface = pygame.transform.scale(self.surface, (100, 100))
         self.rotate_surface = self.surface
         self.pos = pos
-        self.angle = -45
-        self.speed = 3
+        self.angle = 0
+        self.speed = 0
         self.center = [self.pos[0] + 50, self.pos[1] + 50]
         self.radars = []
         self.radars_for_draw = []
@@ -43,7 +43,7 @@ class Car:
     def draw_radar(self, screen):
         for r in self.radars_for_draw:
             pos, dist = r
-            pygame.draw.line(screen, (0, 255, 0), self.center, pos, 3)
+            pygame.draw.line(screen, (0, 255, 0), self.center, pos, 1)
             pygame.draw.circle(screen, (0, 255, 0), pos, 5)
 
     def check_collision(self):
@@ -129,15 +129,16 @@ class Car:
         right_bottom = [self.center[0] + math.cos(math.radians(360 - (self.angle + 330))) * len, self.center[1] + math.sin(math.radians(360 - (self.angle + 330))) * len]
         self.four_points = [left_top, right_top, left_bottom, right_bottom]
 
-
 class PyRace2D:
     def __init__(self, is_render = True):
         pygame.init()
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.clock = pygame.time.Clock()
-        self.car = Car('car.png', 'map1.png', [600, 650])
+        self.font = pygame.font.SysFont("Arial", 30)
+        self.car = Car('car.png', 'map.png', [700, 650])
         self.game_speed = 60
         self.is_render = is_render
+        self.mode = 0
 
     def action(self, action):
         if action == 0:
@@ -193,23 +194,36 @@ class PyRace2D:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_m:
+                    self.mode += 1
+                    self.mode = self.mode % 3
 
         self.screen.blit(self.car.map, (0, 0))
 
-        """
-        self.screen.fill((0, 0, 0))
+
+        if self.mode == 1:
+            self.screen.fill((0, 0, 0))
 
         self.car.radars_for_draw.clear()
         for d in range(-90, 105, 15):
             self.car.check_radar_for_draw(d)
         pygame.draw.circle(self.screen, (255, 255, 0), check_point[self.car.current_check], 70, 1)
-
         self.car.draw_collision(self.screen)
         self.car.draw_radar(self.screen)
-        """
         self.car.draw(self.screen)
+
+
+        text = self.font.render("Press 'm' to change view mode", True, (255, 255, 0))
+        text_rect = text.get_rect()
+        text_rect.center = (screen_width/2, 100)
+        self.screen.blit(text, text_rect)
+
+
+
         pygame.display.flip()
         self.clock.tick(self.game_speed)
+
 
 def get_distance(p1, p2):
 	return math.sqrt(math.pow((p1[0] - p2[0]), 2) + math.pow((p1[1] - p2[1]), 2))

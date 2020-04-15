@@ -15,7 +15,7 @@ def simulate():
     total_rewards = []
     training_done = False
     threshold = 1000
-    env.set_view(False)
+    env.set_view(True)
     for episode in range(NUM_EPISODES):
 
         total_rewards.append(total_reward)
@@ -218,6 +218,7 @@ if __name__ == "__main__":
     MIN_EXPLORE_RATE = 0.001
     MIN_LEARNING_RATE = 0.2
     DECAY_FACTOR = np.prod(NUM_BUCKETS, dtype=float) / 10.0
+    print(DECAY_FACTOR)
 
     NUM_EPISODES = 9999999
     MAX_T = 2000
